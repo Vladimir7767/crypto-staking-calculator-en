@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Advanced Crypto Staking Calculator Online — Compound Interest & APY</title>
+<meta name="description" content="Free interactive crypto staking simulator with Bitcoin and 15 top tokens. Calculate compound interest, future price trends, and capital gains tax instantly.">
+<style>
+:root{--primary:#2563eb;--primary-hover:#1d4ed8;--success:#16a34a;--danger:#dc2626;--bg:#f8fafc;--card-bg:#ffffff;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--accent:#f59e0b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--text);padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.wrapper{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:500px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+h1{font-size:22px;font-weight:700;margin-bottom:4px;text-align:center}
+.subtitle{font-size:14px;color:var(--text-muted);text-align:center;margin-bottom:20px}
+.live-meter{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:20px;text-align:center}
+.meter-label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px}
+.bar-container{background:var(--border);border-radius:20px;height:12px;width:100%;overflow:hidden;position:relative}
+.bar-fill{background:var(--primary);width:50%;height:100%;transition:all 0.4s ease}
+.group{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+select,input[type="number"]{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;color:var(--text);transition:border 0.2s}
+select:focus,input:focus{border-color:var(--primary);outline:none}
+input[type="range"]{width:100%;margin:8px 0;cursor:pointer}
+.range-val{font-size:14px;font-weight:700;color:var(--primary);float:right}
+.btn-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.toggle-btn{padding:10px 2px;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+.toggle-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tm-box{background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:14px;margin-top:20px}
+.tm-title{font-size:13px;font-weight:700;color:#b45309;margin-bottom:8px;text-transform:uppercase;text-align:center}
+.results{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:20px;display:none}
+.res-title{font-size:14px;font-weight:700;color:var(--text-muted);margin-bottom:10px;text-align:center;text-transform:uppercase}
+.res-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed var(--border);align-items:center}
+.res-row:last-child{border-bottom:none}
+.res-val{font-weight:700;color:var(--primary);text-align:right;max-width:65%}
+.res-val.loss{color:var(--accent)}
+.ad{display:none;margin-top:15px;min-height:90px;text-align:center;justify-content:center;align-items:center;width:100%}
+.seo-text{font-size:12px;color:var(--text-muted);margin-top:24px;text-align:justify;line-height:1.4;border-top:1px solid var(--border);padding-top:16px;display:none}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<h1>Crypto Calculator</h1>
+<div class="subtitle">Interactive Staking Simulator & Yield Analyzer</div>
+
+<div class="live-meter">
+<div class="meter-label">Portfolio Strategy: <span id="live-preview-zone">Analyzing Parameters</span></div>
+<div class="bar-container"><div class="bar-fill" id="bar-fill"></div></div>
+</div>
+
+<div class="group">
+<label for="token">Cryptocurrency Asset</label>
+<select id="token" onchange="updatePreview()">
+<option value="BTC" data-apy="3.5">Bitcoin (BTC) — 3.5% Yield</option>
+<option value="ETH" data-apy="3.5">Ethereum (ETH) — 3.5% APY</option>
+<option value="SOL" data-apy="6.5">Solana (SOL) — 6.5% APY</option>
+<option value="ADA" data-apy="3.2">Cardano (ADA) — 3.2% APY</option>
+<option value="DOT" data-apy="14.0">Polkadot (DOT) — 14.0% APY</option>
+<option value="ATOM" data-apy="12.0">Cosmos (ATOM) — 12.0% APY</option>
+<option value="AVAX" data-apy="5.5">Avalanche (AVAX) — 5.5% APY</option>
+<option value="NEAR" data-apy="7.0">Near Protocol (NEAR) — 7.0% APY</option>
+<option value="SUI" data-apy="4.8">Sui (SUI) — 4.8% APY</option>
+<option value="APT" data-apy="6.8">Aptos (APT) — 6.8% APY</option>
+<option value="POL" data-apy="5.0">Polygon (POL) — 5.0% APY</option>
+<option value="TRX" data-apy="4.2">Tron (TRX) — 4.2% APY</option>
+<option value="INJ" data-apy="15.0">Injective (INJ) — 15.0% APY</option>
+<option value="XTZ" data-apy="4.5">Tezos (XTZ) — 4.5% APY</option>
+<option value="MINA" data-apy="11.5">Mina Protocol (MINA) — 11.5% APY</option>
+<option value="USDT" data-apy="8.5">Tether (USDT) — 8.5% APY</option>
+</select>
+</div>
+
+<div class="group">
+<label for="investment">Initial Investment amount ($)</label>
+<input type="number" id="investment" value="5000" min="1" max="50000000" oninput="updatePreview()">
+</div>
+
+<div class="group">
+<label for="years">Lockup Period (Years) <span class="range-val" id="years-val">2</span></label>
+<input type="range" id="years" min="1" max="5" value="2" oninput="document.getElementById('years-val').innerText=this.value; updatePreview();">
+</div>
+
+<div class="group">
+<label>Compound Frequency</label>
+<div class="btn-grid-3" id="compound-group">
+<div class="toggle-btn" onclick="setCompound(1, this)">No Compound</div>
+<div class="toggle-btn active" onclick="setCompound(12, this)">Monthly</div>
+<div class="toggle-btn" onclick="setCompound(365, this)">Daily</div>
+</div>
+</div>
+
+<div class="group">
+<label for="trend">Price Trend Prediction (%) <span class="range-val" id="trend-val">+50%</span></label>
+<input type="range" id="trend" min="-50" max="500" value="50" step="10" oninput="document.getElementById('trend-val').innerText=(this.value >= 0 ? '+' : '') + this.value + '%'; updatePreview();">
+</div>
+
+<button class="calc-btn" onclick="calculateStaking()">Calculate Yield</button>
+
+<div class="results" id="results-box">
+<div class="res-title">Financial & Tax Breakdown</div>
+<div class="res-row"><span>Total Rewards Earned:</span><span class="res-val" id="res-tokens">0</span></div>
+<div class="res-row"><span>Future Portfolio Value:</span><span class="res-val" id="res-total">$0</span></div>
+<div class="res-row"><span>Net Profit (ROI):</span><span class="res-val" id="res-roi">+0%</span></div>
+<div class="res-row"><span>Est. Capital Gains Tax (22%):</span><span class="res-val loss" id="res-tax">$0</span></div>
+</div>
+
+<div class="tm-box" id="tm-container" style="display:none;">
+<div class="tm-title">⏳ Crypto Time Machine</div>
+<div class="res-row" style="border-bottom:none; color:#92400e;"><span id="tm-verdict">Run calculation to trigger the retrospective opportunity-cost audit.</span></div>
+</div>
+
+<div id="ads" class="ad"><div id="container-e8c895e6c70ade8e4ef4a72354f42e97"></div></div>
+
+<div class="seo-text" id="seo-box">
+Our advanced online crypto staking calculator evaluates investment returns by factoring in recursive compound frequencies, asset pooling, and speculative market asset valuations. The engine processes specific annual percentage yields (APY) across 16 different decentralized networks, including Bitcoin lending, Ethereum, and Solana ecosystems, while generating automated estimates for short-term capital gains obligations. An integrated retrospective model exposes historical opportunity costs from previous market cycles. Every computational pipeline operates 100% locally on the client interface to protect balance sheet data integrity.
+</div>
+</div>
+<script>
+let currentCompoundPeriods = 12;
+
+const historicalPricesUSD = {
+  BTC: 27000, ETH: 1650, SOL: 19.5, ADA: 0.25, DOT: 4.10, ATOM: 6.80, 
+  AVAX: 9.30, NEAR: 1.15, SUI: 0.45, APT: 5.10, POL: 0.52, TRX: 0.08, 
+  INJ: 7.20, XTZ: 0.65, MINA: 0.38, USDT: 1.00
+};
+
+const currentPricesUSD = {
+  BTC: 64000, ETH: 2600, SOL: 155, ADA: 0.38, DOT: 4.80, ATOM: 5.20, 
+  AVAX: 28.50, NEAR: 4.90, SUI: 1.85, APT: 8.20, POL: 0.41, TRX: 0.16, 
+  INJ: 21.00, XTZ: 0.70, MINA: 0.55, USDT: 1.00
+};
+
+function setCompound(periods, el) {
+  const parent = el.parentElement;
+  Array.from(parent.children).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentCompoundPeriods = periods;
+  updatePreview();
+}
+
+function calculateStakingData() {
+  const investmentUSD = parseFloat(document.getElementById('investment').value) || 0;
+  const years = parseInt(document.getElementById('years').value) || 1;
+  const trendPercent = parseFloat(document.getElementById('trend').value) || 0;
+  
+  const tokenSelect = document.getElementById('token');
+  const token = tokenSelect.value;
+  const apy = parseFloat(tokenSelect.options[tokenSelect.selectedIndex].getAttribute('data-apy')) / 100;
+
+  if (investmentUSD <= 0) return null;
+
+  const currentTokenPriceUSD = currentPricesUSD[token] || 1;
+  const initialTokens = investmentUSD / currentTokenPriceUSD;
+
+  let finalTokens = initialTokens;
+  if (currentCompoundPeriods === 1) {
+    finalTokens = initialTokens * (1 + (apy * years));
+  } else {
+    finalTokens = initialTokens * Math.pow(1 + (apy / currentCompoundPeriods), currentCompoundPeriods * years);
+  }
+
+  const earnedTokens = Math.max(0, finalTokens - initialTokens);
+
+  const futureTokenPriceUSD = currentTokenPriceUSD * (1 + (trendPercent / 100));
+  const finalPortfolioValueUSD = finalTokens * futureTokenPriceUSD;
+
+  const netProfitUSD = Math.max(0, finalPortfolioValueUSD - investmentUSD);
+  const roi = initialTokens > 0 ? (netProfitUSD / investmentUSD) * 100 : 0;
+  const estimatedTax = netProfitUSD * 0.22; // 22% US Capital Gains Tax Estimate
+
+  const historicalPriceUSD = historicalPricesUSD[token] || 1;
+  const historicalTokens = investmentUSD / historicalPriceUSD;
+  const historicalFinalTokens = historicalTokens * Math.pow(1 + (apy / 12), 12 * 3);
+  const historicalValueUSD = historicalFinalTokens * currentTokenPriceUSD;
+
+  return {
+    earnedTokens: earnedTokens.toFixed(4),
+    finalValue: Math.round(finalPortfolioValueUSD).toLocaleString('en-US'),
+    roi: Math.round(roi),
+    tax: Math.round(estimatedTax).toLocaleString('en-US'),
+    token: token,
+    pastValue: Math.round(historicalValueUSD).toLocaleString('en-US')
+  };
+}
+
+function updatePreview() {
+  const data = calculateStakingData();
+  if (!data) return;
+
+  let zone = "Passive Conservative Income";
+  let color = "var(--primary)";
+  let pct = 35;
+
+  const trendInput = parseFloat(document.getElementById('trend').value);
+
+  if (trendInput > 150 && currentCompoundPeriods === 365) {
+    zone = "🚀 Hyper Bull Run (Maximum Risk Allocation)";
+    color = "var(--danger)";
+    pct = 100;
+  } else if (trendInput >= 30 && currentCompoundPeriods >= 12) {
+    zone = "🔥 Golden Bull Run Strategy (Optimal Allocation)";
+    color = "var(--success)";
+    pct = 75;
+  } else if (trendInput < 0) {
+    zone = "📉 Bear Market Accumulation (Holding Underwater)";
+    color = "var(--text-muted)";
+    pct = 15;
+  }
+
+  const preview = document.getElementById('live-preview-zone');
+  preview.innerText = zone; 
+  preview.style.color = color;
+
+  const fill = document.getElementById('bar-fill');
+  fill.style.width = pct + '%'; 
+  fill.style.background = color;
+}
+
+window.onload = function() {
+  updatePreview();
+};
+
+function showAds() {
+  const c = document.getElementById('ads');
+  if (!window.adScriptLoaded) {
+    window.atOptions = {
+      'key': 'e8c895e6c70ade8e4ef4a72354f42e97',
+      'format': 'iframe',
+      'height': 90,
+      'width': 728,
+      'params': {}
+    };
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = !0;
+    s.src = ['https://', 'bagelstoppage.', 'com/', 'e8c895e6c70ade8e4ef4a72354f42e97/', 'invoke.js'].join('');
+    c.appendChild(s);
+    window.adScriptLoaded = !0;
+  }
+  c.style.display = 'flex';
+}
+
+function calculateStaking() {
+  const data = calculateStakingData();
+  if (!data) {
+    alert('Please enter a valid investment deposit.');
+    return;
+  }
+
+  document.getElementById('res-tokens').innerText = data.earnedTokens + " " + data.token;
+  document.getElementById('res-total').innerText = "\$" + data.finalValue;
+  document.getElementById('res-roi').innerText = "+" + data.roi + "%";
+  document.getElementById('res-tax').innerText = "\$" + data.tax;
+
+  const tmVerdict = `Had you allocated this capital into ${data.token} exactly 3 years ago with compound interest reinvested monthly, your ledger would hold $${data.pastValue} today instead of the baseline asset value!`;
+  document.getElementById('tm-verdict').innerText = tmVerdict;
+
+  document.getElementById('results-box').style.display = 'block';
+  document.getElementById('tm-container').style.display = 'block';
+  document.getElementById('seo-box').style.display = 'block';
+  showAds();
+}
+</script>
+</body>
+</html>
